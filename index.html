@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>pH Simülasyonu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .kap {
+            width: 200px;
+            height: 300px;
+            border: 5px solid #333;
+            border-radius: 10px;
+            margin: 20px auto;
+            position: relative;
+            background: white;
+        }
+        .sivi {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0;
+            transition: all 0.5s;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .deney-tupu {
+            width: 40px;
+            height: 80px;
+            border: 2px solid #333;
+            border-radius: 0 0 20px 20px;
+            margin: 5px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 5px;
+            font-size: 12px;
+            text-align: center;
+            color: white;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+        }
+        .ph-meter {
+            width: 150px;
+            height: 300px;
+            border: 2px solid #333;
+            margin-left: 20px;
+            padding: 10px;
+            background: linear-gradient(to bottom, #444, #222);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+        }
+        .ph-display {
+            font-size: 24px;
+            margin-top: 10px;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
+        }
+        .main-content {
+            display: flex;
+            align-items: center;
+        }
+        .eslesme-kutulari {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        .eslesme-kutusu {
+            padding: 10px;
+            border: 2px solid #333;
+            cursor: pointer;
+            background: white;
+            width: 100px;
+            text-align: center;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .eslesme-kutusu:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .puan-tahtasi {
+            background: #654321;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 3px solid #432100;
+        }
+        .balon {
+            position: fixed;
+            animation: ucus 4s linear;
+            opacity: 0;
+        }
+        @keyframes ucus {
+            0% { transform: translateY(100vh); opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="puan-tahtasi">
+            Puan: <span id="puan">0</span>
+        </div>
+        <h1>pH Simülasyonu</h1>
+        <div class="buttons">
+            <div class="deney-tupu" onclick="dolduKap('kan', '#8B0000', 7.4)" style="background: linear-gradient(to bottom, #FF0000, #8B0000)">Kan</div>
+            <div class="deney-tupu" onclick="dolduKap('kahve', '#4A2F1E', 5.0)" style="background: linear-gradient(to bottom, #6F4E37, #4A2F1E)">Kahve</div>
+            <div class="deney-tupu" onclick="dolduKap('su', '#ADD8E6', 7.0)" style="background: linear-gradient(to bottom, #00BFFF, #ADD8E6)">Su</div>
+            <div class="deney-tupu" onclick="dolduKap('süt', '#FFFFFF', 6.7)" style="background: linear-gradient(to bottom, #FFFFFF, #F5F5F5)">Süt</div>
+            <div class="deney-tupu" onclick="dolduKap('gazoz', '#FFF8DC', 2.5)" style="background: linear-gradient(to bottom, #F0E68C, #FFE4B5)">Gazoz</div>
+            <div class="deney-tupu" onclick="dolduKap('sabun', '#87CEEB', 9.0)" style="background: linear-gradient(to bottom, #87CEEB, #B0E0E6)">Sabun</div>
+            <div class="deney-tupu" onclick="dolduKap('diş macunu', '#F0F8FF', 8.0)" style="background: linear-gradient(to bottom, #F0F8FF, #E0FFFF)">Diş Macunu</div>
+            <div class="deney-tupu" onclick="dolduKap('sirke', '#FFF5E1', 2.9)" style="background: linear-gradient(to bottom, #FFE4C4, #FFDAB9)">Sirke</div>
+            <div class="deney-tupu" onclick="dolduKap('limon', '#FFFACD', 2.0)" style="background: linear-gradient(to bottom, #FFFF00, #FFD700)">Limon</div>
+            <div class="deney-tupu" onclick="dolduKap('karbonat', '#FFFFFF', 8.4)" style="background: linear-gradient(to bottom, #FFFFFF, #F0F0F0)">Karbonat</div>
+            <div class="deney-tupu" onclick="dolduKap('domates', '#FF6347', 4.5)" style="background: linear-gradient(to bottom, #FF6347, #FF4500)">Domates</div>
+            <div class="deney-tupu" onclick="dolduKap('çamaşır suyu', '#F0FFFF', 12.5)" style="background: linear-gradient(to bottom, #F0FFFF, #E0FFFF)">Çamaşır Suyu</div>
+            <div class="deney-tupu" onclick="dolduKap('maden suyu', '#F5F5F5', 5.5)" style="background: linear-gradient(to bottom, #E6E6FA, #D8BFD8)">Maden Suyu</div>
+        </div>
+        <div class="main-content">
+            <div class="kap">
+                <div class="sivi" id="sivi"></div>
+            </div>
+            <div class="ph-meter" ondrop="bırak(event)" ondragover="sürükleÜzerinde(event)">
+                <h3>pH Metre</h3>
+                <div class="ph-display" id="ph-display">-</div>
+            </div>
+            <div class="eslesme-kutulari">
+                <div class="eslesme-kutusu" draggable="true" ondragstart="sürükleBasla(event, 'asit')" data-tip="asit">Asit</div>
+                <div class="eslesme-kutusu" draggable="true" ondragstart="sürükleBasla(event, 'baz')" data-tip="baz">Baz</div>
+                <div class="eslesme-kutusu" draggable="true" ondragstart="sürükleBasla(event, 'nötr')" data-tip="nötr">Nötr</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let aktifPH = 0;
+        let puan = 0;
+
+        function dolduKap(madde, renk, ph) {
+            const sivi = document.getElementById('sivi');
+            const phDisplay = document.getElementById('ph-display');
+            
+            sivi.style.backgroundColor = renk;
+            sivi.style.height = '90%';
+            phDisplay.textContent = ph.toFixed(1);
+            aktifPH = ph;
+        }
+
+        function sürükleBasla(ev, tip) {
+            ev.dataTransfer.setData("text", tip);
+        }
+
+        function sürükleÜzerinde(ev) {
+            ev.preventDefault();
+        }
+
+        function balonlarıUçur() {
+            for(let i = 0; i < 10; i++) {
+                const balon = document.createElement('div');
+                balon.className = 'balon';
+                balon.style.left = Math.random() * window.innerWidth + 'px';
+                balon.innerHTML = '🎈';
+                balon.style.fontSize = '30px';
+                document.body.appendChild(balon);
+                setTimeout(() => balon.remove(), 4000);
+            }
+        }
+
+        function bırak(ev) {
+            ev.preventDefault();
+            const tip = ev.dataTransfer.getData("text");
+            let doğru = false;
+
+            if (aktifPH < 7 && tip === 'asit') doğru = true;
+            else if (aktifPH > 7 && tip === 'baz') doğru = true;
+            else if (aktifPH === 7 && tip === 'nötr') doğru = true;
+
+            if (doğru) {
+                puan += 20;
+                alert('Tebrikler! Doğru eşleştirme!');
+                balonlarıUçur();
+            } else {
+                puan = Math.max(0, puan - 10);
+                alert('Yanlış eşleştirme. Tekrar deneyin!');
+            }
+
+            document.getElementById('puan').textContent = puan;
+        }
+    </script>
+</body>
+</html>
